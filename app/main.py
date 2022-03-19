@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from app.nlp import NLP
+from nlp import NLP
 
 class Message(BaseModel):
     input: str
@@ -12,8 +12,8 @@ nlp = NLP()
 
 origins = [
     "http://localhost",
-    "http://localhost:8000",
-    "http://127.0.0.1:8000"
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
 ]
 
 app.add_middleware(
@@ -28,12 +28,9 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/generative/")
-async def  generate(message: Message):
-    message.output = nlp.generate(prompt=message.input)
-    return {"output" : message.output}
-
-@app.post("/sentiment/")
-async def sentiment_analysis(message: Message):
-    message.output = str(nlp.sentiments(message.input))
-    return {"output" : message.output}
+@app.post("/predictive_sentences/")
+async def predictive_sentences(text: str = Form(...)):
+    return {
+      "text" : nlp.predictive_sentences(prompt=text),
+      "replace_original": "true"
+    }
