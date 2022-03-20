@@ -2,6 +2,10 @@ from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from nlp import NLP
+from task import Task
+from cliche import Cliche
+import requests
+import json
 
 class Message(BaseModel):
     input: str
@@ -9,6 +13,8 @@ class Message(BaseModel):
 
 app = FastAPI()
 nlp = NLP()
+task = Task()
+cliche = Cliche()
 
 origins = [
     "http://localhost",
@@ -28,8 +34,20 @@ app.add_middleware(
 def read_root():
     return {"Hello": "World"}
 
-@app.post("/predictive_sentences/")
-def predictive_sentences(text: str = Form(...)):
+@app.post("/predictive_sentences_task/")
+def predictive_sentences_task(text: str = Form(...), response_url: str = Form(...)):
+    task.create_task(text=text, response_url=response_url)
     return {
-        "text" : nlp.predictive_sentences(text=text),
+        "text" : cliche.cliche
     }
+
+@app.post("/predictive_sentences/")
+def predictive_sentences(text: str = Form(...), response_url: str = Form(...)):
+    payload = json.dump({
+        "text": nlp.predictive_sentences(text=text),
+        "response_type": "in_channel"
+    })
+    response = requests.post(
+        response_url,
+        payload
+    )
