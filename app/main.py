@@ -6,10 +6,11 @@ from task import Task
 from cliche import Cliche
 import requests
 import json
+from pydantic import BaseModel
 
-class Message(BaseModel):
-    input: str
-    output: str = None
+class SentenceMaterial(BaseModel):
+    text: str
+    response_url: str
 
 app = FastAPI()
 nlp = NLP()
@@ -42,12 +43,12 @@ def predictive_sentences_task(text: str = Form(...), response_url: str = Form(..
     }
 
 @app.post("/predictive_sentences/")
-def predictive_sentences(text: str = Form(...), response_url: str = Form(...)):
+def predictive_sentences(sentence_material: SentenceMaterial):
     payload = json.dump({
-        "text": nlp.predictive_sentences(text=text),
+        "text": nlp.predictive_sentences(text=sentence_material.text),
         "response_type": "in_channel"
     })
     response = requests.post(
-        response_url,
+        sentence_material.response_url,
         payload
     )
