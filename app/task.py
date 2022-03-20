@@ -39,4 +39,3 @@ class Task:
         response = self.client.create_task(request={"parent": parent, "task": task})
 
         print("Created task {}".format(response.name))
-        return response
