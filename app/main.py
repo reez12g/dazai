@@ -38,7 +38,7 @@ def read_root():
 @app.post("/predictive_sentences_task/")
 def predictive_sentences_task(text: str = Form(...), response_url: str = Form(...)):
     task.create_task(text=text, response_url=response_url)
-    payload = json.dump({
+    payload = json.dumps({
         "text": cliche.cliche
     })
     response = requests.post(
@@ -48,7 +48,7 @@ def predictive_sentences_task(text: str = Form(...), response_url: str = Form(..
 
 @app.post("/predictive_sentences/")
 def predictive_sentences(sentence_material: SentenceMaterial):
-    payload = json.dump({
+    payload = json.dumps({
         "text": nlp.predictive_sentences(text=sentence_material.text),
         "response_type": "in_channel"
     })
