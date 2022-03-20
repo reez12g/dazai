@@ -20,5 +20,5 @@ class Cliche:
             "笑われて、笑われて、つよくなる。少し考えてみます"
         ]
 
-    def cliché(self):
+    def cliche(self):
         return random.choice(self.cliche)
