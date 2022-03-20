@@ -29,8 +29,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.post("/predictive_sentences/")
-async def predictive_sentences(text: str = Form(...)):
+def predictive_sentences(text: str = Form(...)):
     return {
-      "text" : nlp.predictive_sentences(prompt=text),
-      "replace_original": "true"
+        "text" : nlp.predictive_sentences(text=text),
     }
