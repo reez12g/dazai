@@ -42,11 +42,10 @@ def predictive_sentences_task(text: str = Form(...), response_url: str = Form(..
         "text": cliche.cliche
     })
     print(payload)
-    response = requests.post(
+    requests.post(
         response_url,
         payload
     )
-    print(response)
 
 @app.post("/predictive_sentences/")
 def predictive_sentences(sentence_material: SentenceMaterial):
@@ -55,8 +54,7 @@ def predictive_sentences(sentence_material: SentenceMaterial):
         "response_type": "in_channel"
     })
     print(payload)
-    response = requests.post(
+    requests.post(
         sentence_material.response_url,
         payload
     )
-    print(response)
