@@ -46,6 +46,7 @@ def predictive_sentences(sentence_material: SentenceMaterial):
         "text": nlp.predictive_sentences(text=sentence_material.text),
         "response_type": "in_channel"
     })
+    print(sentence_material.text)
     print(payload)
     requests.post(
         sentence_material.response_url,
