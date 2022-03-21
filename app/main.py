@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from nlp import NLP
 from task import Task
 from cliche import Cliche
 import requests
 import json
-from pydantic import BaseModel
 
 class SentenceMaterial(BaseModel):
     text: str
@@ -38,14 +38,7 @@ def read_root():
 @app.post("/predictive_sentences_task/")
 def predictive_sentences_task(text: str = Form(...), response_url: str = Form(...)):
     task.create_task(text=text, response_url=response_url)
-    payload = json.dumps({
-        "text": cliche.cliche
-    })
-    print(payload)
-    requests.post(
-        response_url,
-        payload
-    )
+    return JSONResponse(content={"response_type": "in_channel", "text": cliche.cliche})
 
 @app.post("/predictive_sentences/")
 def predictive_sentences(sentence_material: SentenceMaterial):
