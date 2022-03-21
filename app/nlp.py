@@ -10,5 +10,5 @@ class NLP:
 
     def predictive_sentences(self, text):
         input = self.tokenizer.encode(text, return_tensors="pt")
-        output = self.model.generate(input, do_sample=True, max_length=input.size()[1] + 50)
+        output = self.model.generate(input, do_sample=True, max_length=input.size()[1] + 80)
         return self.tokenizer.batch_decode(output)[0]
