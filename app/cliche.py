@@ -2,7 +2,7 @@ import random
 
 class Cliche:
     def __init__(self) -> None:
-        self.cliche = [
+        self.cliches = [
             "信じられているから走るのだ。少し考えてみます。",
             "私はなんにも知りません。少し考えてみます。",
             "人間は、しばしば希望にあざむかれるが、少し考えてみます。",
@@ -21,4 +21,4 @@ class Cliche:
         ]
 
     def cliche(self):
-        return random.choice(self.cliche)
+        return random.choice(self.cliches)

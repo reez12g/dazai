@@ -33,7 +33,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": cliche.cliche()}
 
 @app.post("/predictive_sentences_task/")
 def predictive_sentences_task(text: str = Form(...), response_url: str = Form(...)):
