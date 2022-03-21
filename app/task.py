@@ -37,5 +37,3 @@ class Task:
         task["http_request"]["body"] = converted_payload
 
         response = self.client.create_task(request={"parent": parent, "task": task})
-
-        print("Created task {}".format(response.name))
