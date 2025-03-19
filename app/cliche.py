@@ -1,8 +1,15 @@
 import random
+from typing import List, Optional
 
 class Cliche:
+    """
+    A class that provides random literary cliches in Japanese.
+    These are typically used as placeholder responses or to add literary flair to messages.
+    """
+
     def __init__(self) -> None:
-        self.cliches = [
+        """Initialize the Cliche class with a list of Japanese literary phrases."""
+        self.cliches: List[str] = [
             "信じられているから走るのだ。少し考えてみよう。",
             "私はなんにも知りません。しかし、少し考えてみましょう。",
             "人間は、しばしば希望にあざむかれるが、少し考えてみよう。",
@@ -19,5 +26,22 @@ class Cliche:
             "笑われて、笑われて、つよくなる。少し考えてみよう。"
         ]
 
-    def cliche(self):
-        return random.choice(self.cliches)
+    def cliche(self, exclude: Optional[List[str]] = None) -> str:
+        """
+        Return a random cliche from the collection.
+
+        Args:
+            exclude: Optional list of cliches to exclude from selection
+
+        Returns:
+            A randomly selected cliche phrase
+        """
+        if exclude:
+            available_cliches = [c for c in self.cliches if c not in exclude]
+            if not available_cliches:
+                # If all cliches are excluded, fall back to the full list
+                available_cliches = self.cliches
+        else:
+            available_cliches = self.cliches
+
+        return random.choice(available_cliches)
