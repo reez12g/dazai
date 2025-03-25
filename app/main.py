@@ -1,138 +1,60 @@
-import json
+"""
+Main module for the Dazai API application.
+
+This module initializes and configures the FastAPI application,
+sets up middleware, and includes all routers.
+"""
 import logging
-from typing import Dict, Any
-
-import requests
-from fastapi import FastAPI, Form, HTTPException, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, HttpUrl
 
-# Use absolute imports for local modules
-from app.nlp import NLP
-from app.task import Task
-from app.cliche import Cliche
+from app.config import app_settings
+from app.routers import general, tasks, generation
+from app.utils.logging import setup_logging
+from app.utils.middleware import setup_exception_handlers
 
-# Configure logging
+# Set up logging
+setup_logging()
+
+# Configure logger for this module
 logger = logging.getLogger(__name__)
-
-# Define data models
-class SentenceMaterial(BaseModel):
-    """Data model for sentence generation request."""
-    text: str
-    response_url: HttpUrl
-
-class ResponseMessage(BaseModel):
-    """Data model for API responses."""
-    text: str
 
 # Initialize FastAPI app
 app = FastAPI(
-    title="Dazai API",
-    description="API for predictive text generation using GPT-2",
-    version="1.0.0"
+    title=app_settings.APP_TITLE,
+    description=app_settings.APP_DESCRIPTION,
+    version=app_settings.APP_VERSION
 )
 
-# Initialize services
-nlp = NLP()
-task = Task()
-cliche = Cliche()
-
 # Configure CORS
-origins = [
-    "http://localhost",
-    "http://localhost:8080",
-    "http://127.0.0.1:8080"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=app_settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
-@app.get("/", response_model=ResponseMessage, tags=["General"])
-async def read_root() -> Dict[str, str]:
-    """
-    Root endpoint that returns a random cliche.
+# Set up exception handlers
+setup_exception_handlers(app)
 
-    Returns:
-        A dictionary with a random cliche message
-    """
-    try:
-        return {"text": cliche.cliche()}
-    except Exception as e:
-        logger.error(f"Error in root endpoint: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred"
-        )
+# Include routers
+app.include_router(general.router)
+app.include_router(tasks.router)
+app.include_router(generation.router)
 
-@app.post("/predictive_sentences_task/", response_model=ResponseMessage, tags=["Tasks"])
-async def predictive_sentences_task(text: str = Form(...), response_url: str = Form(...)) -> JSONResponse:
-    """
-    Create a Cloud Task for asynchronous sentence generation.
+# Log application startup
+logger.info(f"Application {app_settings.APP_TITLE} v{app_settings.APP_VERSION} initialized")
 
-    Args:
-        text: The input text to generate from
-        response_url: The URL to send the generated text to
-
-    Returns:
-        A JSON response with a random cliche message
-    """
-    try:
-        task.create_task(text=text, response_url=response_url)
-        return JSONResponse(content={"text": cliche.cliche()})
-    except Exception as e:
-        logger.error(f"Error creating task: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to create task"
-        )
-
-@app.post("/predictive_sentences/", status_code=status.HTTP_202_ACCEPTED, tags=["Generation"])
-async def predictive_sentences(sentence_material: SentenceMaterial) -> Dict[str, str]:
-    """
-    Generate predictive text and send it to the specified URL.
-
-    Args:
-        sentence_material: Object containing text to generate from and response URL
-
-    Returns:
-        A dictionary with status information
-    """
-    try:
-        # Generate the text
-        generated_text = nlp.predictive_sentences(text=sentence_material.text)
-
-        # Prepare the payload
-        payload = json.dumps({
-            "text": generated_text,
-            "response_type": "in_channel"
-        })
-
-        # Send the response
-        response = requests.post(
-            str(sentence_material.response_url),
-            data=payload,
-            headers={"Content-Type": "application/json"}
-        )
-
-        # Check if the request was successful
-        response.raise_for_status()
-
-        return {"status": "Text generated and sent successfully"}
-    except requests.RequestException as e:
-        logger.error(f"Error sending response: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Failed to send response to the provided URL"
-        )
-    except Exception as e:
-        logger.error(f"Error in predictive_sentences: {str(e)}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred during text generation"
-        )
+if __name__ == "__main__":
+    import uvicorn
+    from app.utils.logging import get_log_config
+    
+    logger.info("Starting application in standalone mode")
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8080,
+        log_config=get_log_config(),
+        reload=True
+    )
