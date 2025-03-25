@@ -49,7 +49,7 @@ logger.info(f"Application {app_settings.APP_TITLE} v{app_settings.APP_VERSION} i
 if __name__ == "__main__":
     import uvicorn
     from app.utils.logging import get_log_config
-    
+
     logger.info("Starting application in standalone mode")
     uvicorn.run(
         "app.main:app",

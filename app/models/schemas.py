@@ -11,7 +11,7 @@ class SentenceMaterial(BaseModel):
     """Data model for sentence generation request."""
     text: str
     response_url: HttpUrl
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -24,7 +24,7 @@ class SentenceMaterial(BaseModel):
 class ResponseMessage(BaseModel):
     """Data model for API responses."""
     text: str
-    
+
     class Config:
         schema_extra = {
             "example": {
@@ -36,7 +36,7 @@ class ResponseMessage(BaseModel):
 class TaskResponse(BaseModel):
     """Data model for task creation responses."""
     status: str
-    
+
     class Config:
         schema_extra = {
             "example": {

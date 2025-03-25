@@ -18,20 +18,20 @@ logger = logging.getLogger(__name__)
 def setup_exception_handlers(app: FastAPI) -> None:
     """
     Set up exception handlers for the application.
-    
+
     Args:
         app: The FastAPI application
     """
-    
+
     @app.exception_handler(DazaiError)
     async def dazai_exception_handler(request: Request, exc: DazaiError) -> JSONResponse:
         """
         Handle custom DazaiError exceptions.
-        
+
         Args:
             request: The request that caused the exception
             exc: The exception
-            
+
         Returns:
             A JSON response with the error details
         """
@@ -43,16 +43,16 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 **({"extra": exc.details} if exc.details else {})
             }
         )
-    
+
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
         """
         Handle request validation errors.
-        
+
         Args:
             request: The request that caused the exception
             exc: The exception
-            
+
         Returns:
             A JSON response with the validation error details
         """
@@ -64,16 +64,16 @@ def setup_exception_handlers(app: FastAPI) -> None:
                 "errors": exc.errors()
             }
         )
-    
+
     @app.exception_handler(Exception)
     async def general_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         """
         Handle all other exceptions.
-        
+
         Args:
             request: The request that caused the exception
             exc: The exception
-            
+
         Returns:
             A JSON response with a generic error message
         """

@@ -26,7 +26,7 @@ class TaskService:
             logger.warning("Task service initialized but tasks are disabled due to invalid configuration.")
             self.client = None
             return
-            
+
         self.client = tasks_v2.CloudTasksClient()
 
     def create_task(self, text: str, response_url: str) -> Optional[tasks_v2.Task]:

@@ -29,7 +29,7 @@ class NLPService:
     def tokenizer(self) -> GPT2Tokenizer:
         """
         Lazy loading of tokenizer.
-        
+
         Returns:
             The GPT-2 tokenizer
         """
@@ -42,7 +42,7 @@ class NLPService:
     def model(self) -> GPT2LMHeadModel:
         """
         Lazy loading of model.
-        
+
         Returns:
             The GPT-2 model
         """
@@ -52,9 +52,9 @@ class NLPService:
         return self._model
 
     def generate_text(
-        self, 
-        text: str, 
-        max_additional_tokens: int = None, 
+        self,
+        text: str,
+        max_additional_tokens: int = None,
         do_sample: bool = None
     ) -> str:
         """
@@ -71,10 +71,10 @@ class NLPService:
         # Use settings from config if not explicitly provided
         if max_additional_tokens is None:
             max_additional_tokens = nlp_settings.MAX_ADDITIONAL_TOKENS
-        
+
         if do_sample is None:
             do_sample = nlp_settings.DO_SAMPLE
-            
+
         try:
             # Encode the input text
             input_ids = self.tokenizer.encode(text, return_tensors="pt")

@@ -14,14 +14,14 @@ class AppSettings(BaseSettings):
     APP_TITLE: str = "Dazai API"
     APP_DESCRIPTION: str = "API for predictive text generation using GPT-2"
     APP_VERSION: str = "1.0.0"
-    
+
     # CORS settings
     CORS_ORIGINS: List[str] = [
         "http://localhost",
         "http://localhost:8080",
         "http://127.0.0.1:8080"
     ]
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -32,7 +32,7 @@ class NLPSettings(BaseSettings):
     MODEL_NAME: str = "rinna/japanese-gpt2-small"
     MAX_ADDITIONAL_TOKENS: int = 80
     DO_SAMPLE: bool = True
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -46,7 +46,7 @@ class TaskSettings(BaseSettings):
     TASK_URL: str = "http://localhost:8080"
     SERVICE_ACCOUNT_EMAIL: Optional[str] = None
     AUDIENCE: str = "http://localhost:8080"
-    
+
     @validator('PROJECT_ID', 'QUEUE_ID', 'LOCATION_ID', 'SERVICE_ACCOUNT_EMAIL')
     def check_required_fields(cls, v, values, **kwargs):
         """Validate that required fields are present."""
@@ -54,7 +54,7 @@ class TaskSettings(BaseSettings):
             field_name = kwargs.get('field').name
             raise ValueError(f"{field_name} is required for Google Cloud Tasks")
         return v
-    
+
     class Config:
         env_file = ".env"
         case_sensitive = True
