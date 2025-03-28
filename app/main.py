@@ -9,7 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import app_settings
-from app.routers import general, tasks, generation
+from app.routers import general, tasks, generation, style_transfer, summarization, sentiment
 from app.utils.logging import setup_logging
 from app.utils.middleware import setup_exception_handlers
 
@@ -42,6 +42,9 @@ setup_exception_handlers(app)
 app.include_router(general.router)
 app.include_router(tasks.router)
 app.include_router(generation.router)
+app.include_router(style_transfer.router)
+app.include_router(summarization.router)
+app.include_router(sentiment.router)
 
 # Log application startup
 logger.info(f"Application {app_settings.APP_TITLE} v{app_settings.APP_VERSION} initialized")
