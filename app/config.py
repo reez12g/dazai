@@ -12,7 +12,7 @@ from pydantic import BaseSettings, HttpUrl, validator
 class AppSettings(BaseSettings):
     """Application-wide settings."""
     APP_TITLE: str = "Dazai API"
-    APP_DESCRIPTION: str = "API for predictive text generation using GPT-2"
+    APP_DESCRIPTION: str = "API for Japanese text generation and analysis using NLP models"
     APP_VERSION: str = "1.0.0"
 
     # CORS settings
@@ -29,9 +29,20 @@ class AppSettings(BaseSettings):
 
 class NLPSettings(BaseSettings):
     """NLP model settings."""
+    # Text generation settings
     MODEL_NAME: str = "rinna/japanese-gpt2-small"
     MAX_ADDITIONAL_TOKENS: int = 80
     DO_SAMPLE: bool = True
+
+    # Style transfer settings
+    STYLE_TRANSFER_MODEL: str = "sonoisa/t5-base-japanese"
+
+    # Summarization settings
+    SUMMARIZATION_MODEL: str = "sonoisa/t5-base-japanese-summarize"
+    DEFAULT_SUMMARY_LENGTH: int = 100
+
+    # Sentiment analysis settings
+    SENTIMENT_MODEL: str = "daigo/bert-base-japanese-sentiment"
 
     class Config:
         env_file = ".env"
