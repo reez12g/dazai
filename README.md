@@ -1,6 +1,6 @@
 # Dazai API
 
-API for predictive text generation using GPT-2.
+API for Japanese text generation and analysis using NLP models.
 
 ## Project Structure
 
@@ -18,18 +18,33 @@ app/
 │   ├── __init__.py
 │   ├── general.py          # General endpoints
 │   ├── generation.py       # Text generation endpoints
-│   └── tasks.py            # Task management endpoints
+│   ├── tasks.py            # Task management endpoints
+│   ├── style_transfer.py   # Text style transformation endpoints
+│   ├── summarization.py    # Text summarization endpoints
+│   └── sentiment.py        # Sentiment analysis endpoints
 ├── services/               # Business logic
 │   ├── __init__.py
 │   ├── cliche_service.py   # Literary cliche service
 │   ├── nlp_service.py      # NLP text generation service
-│   └── task_service.py     # Google Cloud Tasks service
+│   ├── task_service.py     # Google Cloud Tasks service
+│   ├── style_transfer_service.py  # Text style transformation service
+│   ├── summarization_service.py   # Text summarization service
+│   └── sentiment_service.py       # Sentiment analysis service
 └── utils/                  # Utility functions
     ├── __init__.py
     ├── exceptions.py       # Custom exception classes
     ├── logging.py          # Logging configuration
     └── middleware.py       # FastAPI middleware
 ```
+
+## Features
+
+1. **Predictive Text Generation**: Generate Japanese text using the rinna/japanese-gpt2-small model.
+2. **Text Style Transfer**: Transform text into different literary styles (Meiji era, formal, casual, etc.).
+3. **Text Summarization**: Create concise summaries of longer Japanese texts.
+4. **Sentiment Analysis**: Analyze the sentiment and emotional tone of Japanese text.
+5. **Task Management**: Asynchronous processing with Google Cloud Tasks.
+6. **Literary Cliches**: Generate literary cliches in Japanese.
 
 ## Key Improvements
 
@@ -40,6 +55,7 @@ app/
 5. **Better Logging**: Centralized logging configuration.
 6. **Type Hints**: Consistent type annotations throughout the codebase.
 7. **Documentation**: Improved docstrings and comments.
+8. **Multiple NLP Models**: Support for various pre-trained models for different NLP tasks.
 
 ## Running the Application
 
@@ -66,3 +82,30 @@ Once the application is running, you can access the API documentation at:
 
 - Swagger UI: http://localhost:8080/docs
 - ReDoc: http://localhost:8080/redoc
+
+## Environment Variables
+
+The application uses the following environment variables:
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| APP_TITLE | Application title | "Dazai API" |
+| APP_DESCRIPTION | Application description | "API for predictive text generation using GPT-2" |
+| APP_VERSION | Application version | "1.0.0" |
+| CORS_ORIGINS | Allowed CORS origins | ["http://localhost", "http://localhost:8080", "http://127.0.0.1:8080"] |
+| MODEL_NAME | NLP model name | "rinna/japanese-gpt2-small" |
+| MAX_ADDITIONAL_TOKENS | Maximum tokens to generate | 80 |
+| DO_SAMPLE | Whether to use sampling for generation | true |
+| PROJECT_ID | Google Cloud project ID | None |
+| QUEUE_ID | Google Cloud Tasks queue ID | None |
+| LOCATION_ID | Google Cloud Tasks location ID | None |
+| TASK_URL | URL for task processing | "http://localhost:8080" |
+| SERVICE_ACCOUNT_EMAIL | Google Cloud service account email | None |
+| AUDIENCE | Audience for OIDC token | "http://localhost:8080" |
+
+## Models Used
+
+- **Text Generation**: rinna/japanese-gpt2-small
+- **Style Transfer**: sonoisa/t5-base-japanese
+- **Summarization**: sonoisa/t5-base-japanese-summarize
+- **Sentiment Analysis**: daigo/bert-base-japanese-sentiment
