@@ -5,11 +5,12 @@ This module initializes and configures the FastAPI application,
 sets up middleware, and includes all routers.
 """
 import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import app_settings
-from app.routers import general, tasks, generation, style_transfer, summarization, sentiment
+from app.routers import general, generation, sentiment, style_transfer, summarization, tasks
 from app.utils.logging import setup_logging
 from app.utils.middleware import setup_exception_handlers
 
@@ -23,7 +24,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=app_settings.APP_TITLE,
     description=app_settings.APP_DESCRIPTION,
-    version=app_settings.APP_VERSION
+    version=app_settings.APP_VERSION,
 )
 
 # Configure CORS
@@ -51,13 +52,8 @@ logger.info(f"Application {app_settings.APP_TITLE} v{app_settings.APP_VERSION} i
 
 if __name__ == "__main__":
     import uvicorn
+
     from app.utils.logging import get_log_config
 
     logger.info("Starting application in standalone mode")
-    uvicorn.run(
-        "app.main:app",
-        host="0.0.0.0",
-        port=8080,
-        log_config=get_log_config(),
-        reload=True
-    )
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8080, log_config=get_log_config(), reload=True)
