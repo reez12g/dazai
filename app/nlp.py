@@ -1,12 +1,12 @@
-from typing import Optional
 import logging
+from typing import Optional
+
 import torch
-from transformers import (
-    GPT2LMHeadModel,
-    GPT2Tokenizer,  # Using GPT2Tokenizer instead of T5Tokenizer for consistency
-)
+from transformers import GPT2Tokenizer  # Using GPT2Tokenizer instead of T5Tokenizer for consistency
+from transformers import GPT2LMHeadModel
 
 logger = logging.getLogger(__name__)
+
 
 class NLP:
     """Natural Language Processing class for text generation using GPT-2."""
@@ -34,7 +34,9 @@ class NLP:
             self._model = GPT2LMHeadModel.from_pretrained(self.MODEL_NAME)
         return self._model
 
-    def predictive_sentences(self, text: str, max_additional_tokens: int = 80, do_sample: bool = True) -> str:
+    def predictive_sentences(
+        self, text: str, max_additional_tokens: int = 80, do_sample: bool = True
+    ) -> str:
         """
         Generate predictive text based on the input.
 
@@ -59,12 +61,12 @@ class NLP:
                     input_ids,
                     do_sample=do_sample,
                     max_length=max_length,
-                    pad_token_id=self.tokenizer.eos_token_id
+                    pad_token_id=self.tokenizer.eos_token_id,
                 )
 
             # Decode the output and clean it
             decoded_output = self.tokenizer.batch_decode(output)[0]
-            cleaned_output = decoded_output.replace('</s>', '').replace('<unk>', '')
+            cleaned_output = decoded_output.replace("</s>", "").replace("<unk>", "")
 
             return cleaned_output
 

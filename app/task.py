@@ -1,17 +1,19 @@
 import json
 import logging
 import os
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
-from google.cloud import tasks_v2
 from google.api_core.exceptions import GoogleAPIError
+from google.cloud import tasks_v2
 
 # Configure logging
 logger = logging.getLogger(__name__)
 
+
 # Load environment variables with better defaults and documentation
 class Config:
     """Configuration for Google Cloud Tasks."""
+
     PROJECT_ID = os.getenv("PROJECT_ID")
     QUEUE_ID = os.getenv("QUEUE_ID")
     LOCATION_ID = os.getenv("LOCATION_ID")
@@ -30,6 +32,7 @@ class Config:
             return False
         return True
 
+
 class Task:
     """Handles Google Cloud Task creation and management."""
 
@@ -39,8 +42,10 @@ class Task:
         self.config_valid = Config.validate()
 
         if not self.config_valid:
-            logger.warning("Task service initialized with invalid configuration. "
-                          "Tasks may not be created properly.")
+            logger.warning(
+                "Task service initialized with invalid configuration. "
+                "Tasks may not be created properly."
+            )
 
     def create_task(self, text: str, response_url: str) -> Optional[tasks_v2.Task]:
         """
@@ -64,11 +69,7 @@ class Task:
 
         try:
             # Create the task queue path
-            parent = self.client.queue_path(
-                Config.PROJECT_ID,
-                Config.LOCATION_ID,
-                Config.QUEUE_ID
-            )
+            parent = self.client.queue_path(Config.PROJECT_ID, Config.LOCATION_ID, Config.QUEUE_ID)
 
             # Define the task
             task: Dict[str, Any] = {
@@ -79,15 +80,12 @@ class Task:
                         "service_account_email": Config.SERVICE_ACCOUNT_EMAIL,
                         "audience": Config.AUDIENCE,
                     },
-                    "headers": {"Content-type": "application/json"}
+                    "headers": {"Content-type": "application/json"},
                 }
             }
 
             # Prepare the payload
-            payload = json.dumps({
-                "text": text,
-                "response_url": response_url
-            })
+            payload = json.dumps({"text": text, "response_url": response_url})
 
             # Add the payload to the task
             task["http_request"]["body"] = payload.encode()

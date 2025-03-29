@@ -1,6 +1,7 @@
 import random
 from typing import List, Optional
 
+
 class Cliche:
     """
     A class that provides random literary cliches in Japanese.
@@ -23,7 +24,7 @@ class Cliche:
             "不良とは、優しさの事ではないかしら。しかし、少し考えてみよう。",
             "僕は今まで、説教されて、改心したことが、まだいちどもない。しかし、少し考えてみよう。",
             "怒る時に怒らなければ、人間の甲斐がありません。少し考えてみましょう。",
-            "笑われて、笑われて、つよくなる。少し考えてみよう。"
+            "笑われて、笑われて、つよくなる。少し考えてみよう。",
         ]
 
     def cliche(self, exclude: Optional[List[str]] = None) -> str:
