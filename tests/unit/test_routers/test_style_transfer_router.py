@@ -3,13 +3,14 @@ Unit tests for the style transfer router.
 
 This module contains tests for the style transfer API endpoints.
 """
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.routers.style_transfer import router, get_style_transfer_service
 from app.models.schemas import StyleTransferRequest, StyleTransferResponse
+from app.routers.style_transfer import get_style_transfer_service, router
 
 
 @pytest.fixture
@@ -46,8 +47,7 @@ class TestStyleTransferRouter:
 
         # Make the request
         response = client.post(
-            "/style_transfer/",
-            json={"text": "これはテストです。", "target_style": "meiji"}
+            "/style_transfer/", json={"text": "これはテストです。", "target_style": "meiji"}
         )
 
         # Verify the response
@@ -56,8 +56,7 @@ class TestStyleTransferRouter:
 
         # Verify the service was called with the correct parameters
         mock_style_transfer_service.transform_text.assert_called_once_with(
-            text="これはテストです。",
-            target_style="meiji"
+            text="これはテストです。", target_style="meiji"
         )
 
         # Clean up
@@ -71,8 +70,7 @@ class TestStyleTransferRouter:
 
         # Make a request with missing required field
         response = client.post(
-            "/style_transfer/",
-            json={"text": "これはテストです。"}  # Missing target_style
+            "/style_transfer/", json={"text": "これはテストです。"}  # Missing target_style
         )
 
         # Verify the response
@@ -95,8 +93,7 @@ class TestStyleTransferRouter:
 
         # Make the request
         response = client.post(
-            "/style_transfer/",
-            json={"text": "これはテストです。", "target_style": "invalid_style"}
+            "/style_transfer/", json={"text": "これはテストです。", "target_style": "invalid_style"}
         )
 
         # Verify the response
@@ -117,8 +114,7 @@ class TestStyleTransferRouter:
 
         # Make the request
         response = client.post(
-            "/style_transfer/",
-            json={"text": "これはテストです。", "target_style": "meiji"}
+            "/style_transfer/", json={"text": "これはテストです。", "target_style": "meiji"}
         )
 
         # Verify the response

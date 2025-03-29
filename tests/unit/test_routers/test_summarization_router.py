@@ -3,13 +3,14 @@ Unit tests for the summarization router.
 
 This module contains tests for the text summarization API endpoints.
 """
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.routers.summarization import router, get_summarization_service
 from app.models.schemas import SummarizationRequest, SummarizationResponse
+from app.routers.summarization import get_summarization_service, router
 
 
 @pytest.fixture
@@ -46,8 +47,7 @@ class TestSummarizationRouter:
 
         # Make the request
         response = client.post(
-            "/summarization/",
-            json={"text": "これは長いテキストです。要約が必要です。", "max_length": 50}
+            "/summarization/", json={"text": "これは長いテキストです。要約が必要です。", "max_length": 50}
         )
 
         # Verify the response
@@ -56,8 +56,7 @@ class TestSummarizationRouter:
 
         # Verify the service was called with the correct parameters
         mock_summarization_service.summarize_text.assert_called_once_with(
-            text="これは長いテキストです。要約が必要です。",
-            max_length=50
+            text="これは長いテキストです。要約が必要です。", max_length=50
         )
 
         # Clean up
@@ -71,8 +70,7 @@ class TestSummarizationRouter:
 
         # Make a request with invalid max_length (below minimum)
         response = client.post(
-            "/summarization/",
-            json={"text": "これはテキストです。", "max_length": 5}  # min is 10
+            "/summarization/", json={"text": "これはテキストです。", "max_length": 5}  # min is 10
         )
 
         # Verify the response
@@ -94,10 +92,7 @@ class TestSummarizationRouter:
         mock_summarization_service.summarize_text.side_effect = ValueError("Invalid text")
 
         # Make the request
-        response = client.post(
-            "/summarization/",
-            json={"text": "これはテキストです。", "max_length": 50}
-        )
+        response = client.post("/summarization/", json={"text": "これはテキストです。", "max_length": 50})
 
         # Verify the response
         assert response.status_code == 400  # Bad Request
@@ -116,10 +111,7 @@ class TestSummarizationRouter:
         mock_summarization_service.summarize_text.side_effect = Exception("Unexpected error")
 
         # Make the request
-        response = client.post(
-            "/summarization/",
-            json={"text": "これはテキストです。", "max_length": 50}
-        )
+        response = client.post("/summarization/", json={"text": "これはテキストです。", "max_length": 50})
 
         # Verify the response
         assert response.status_code == 500  # Internal Server Error
@@ -136,8 +128,7 @@ class TestSummarizationRouter:
 
         # Make the request
         response = client.post(
-            "/summarization/keywords",
-            json={"text": "これはキーワード抽出のテストです。", "max_length": 50}
+            "/summarization/keywords", json={"text": "これはキーワード抽出のテストです。", "max_length": 50}
         )
 
         # Verify the response
@@ -146,8 +137,7 @@ class TestSummarizationRouter:
 
         # Verify the service was called with the correct parameters
         mock_summarization_service.extract_keywords.assert_called_once_with(
-            text="これはキーワード抽出のテストです。",
-            num_keywords=5  # Fixed value in the router
+            text="これはキーワード抽出のテストです。", num_keywords=5  # Fixed value in the router
         )
 
         # Clean up
@@ -164,8 +154,7 @@ class TestSummarizationRouter:
 
         # Make the request
         response = client.post(
-            "/summarization/keywords",
-            json={"text": "これはキーワード抽出のテストです。", "max_length": 50}
+            "/summarization/keywords", json={"text": "これはキーワード抽出のテストです。", "max_length": 50}
         )
 
         # Verify the response
