@@ -1,0 +1,11 @@
+# Testing dependencies only (not including main requirements to avoid NLP library issues)
+pytest==7.3.1
+pytest-asyncio==0.21.0
+pytest-cov==4.1.0
+pytest-mock==3.10.0
+httpx==0.24.0  # For testing FastAPI applications
+coverage==7.2.7
+fastapi>=0.75.0
+pydantic>=1.9.0
+starlette>=0.17.1
+python-multipart>=0.0.5  # Required for form data in FastAPI
