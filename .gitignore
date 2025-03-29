@@ -27,5 +27,11 @@ ENV/
 *.swp
 *.swo
 
+# Linting and formatting
+.mypy_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+
 # Test output files
 .pytest_tmpdir/
