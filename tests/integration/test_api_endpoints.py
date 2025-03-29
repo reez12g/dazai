@@ -88,13 +88,13 @@ class TestStyleTransferEndpoints:
         """Test the style transfer endpoint with mocked model."""
         # Mock the model transformation to avoid actual model loading
         mock_transform.return_value = "明治文体に変換されたテキスト"
-        
+
         # Make the request
         response = client.post(
             "/style_transfer/",
             json={"text": "これはテストです。", "target_style": "meiji"}
         )
-        
+
         # Verify the response
         assert response.status_code == 200
         assert "transformed_text" in response.json()
@@ -109,13 +109,13 @@ class TestSummarizationEndpoints:
         """Test the summarization endpoint with mocked service."""
         # Mock the summarization method
         mock_summarize.return_value = "要約されたテキスト"
-        
+
         # Make the request
         response = client.post(
             "/summarization/",
             json={"text": "これは長いテキストです。要約が必要です。", "max_length": 50}
         )
-        
+
         # Verify the response
         assert response.status_code == 200
         assert "summary" in response.json()
@@ -126,13 +126,13 @@ class TestSummarizationEndpoints:
         """Test the keyword extraction endpoint with mocked service."""
         # Mock the keyword extraction method
         mock_extract.return_value = ["キーワード1", "キーワード2", "キーワード3"]
-        
+
         # Make the request
         response = client.post(
             "/summarization/keywords",
             json={"text": "これはキーワード抽出のテストです。"}
         )
-        
+
         # Verify the response
         assert response.status_code == 200
         assert isinstance(response.json(), list)
@@ -156,13 +156,13 @@ class TestSentimentEndpoints:
                 "negative": 0.05
             }
         }
-        
+
         # Make the request
         response = client.post(
             "/sentiment/",
             json={"text": "この映画はとても面白かったです。"}
         )
-        
+
         # Verify the response
         assert response.status_code == 200
         result = response.json()
@@ -180,19 +180,19 @@ class TestSentimentEndpoints:
             "score": 0.85,
             "details": {}
         }
-        
+
         # Mock the emotion keywords method
         mock_keywords.return_value = {
             "joy": ["喜び", "嬉しい", "楽しい"],
             "excitement": ["興奮", "ワクワク", "熱狂"]
         }
-        
+
         # Make the request
         response = client.post(
             "/sentiment/emotion_keywords",
             json={"text": "この映画はとても面白かったです。"}
         )
-        
+
         # Verify the response
         assert response.status_code == 200
         result = response.json()

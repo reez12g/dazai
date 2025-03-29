@@ -66,12 +66,12 @@ async def get_emotion_keywords(
     try:
         # First analyze the sentiment
         sentiment_result = sentiment_service.analyze_sentiment(text=request.text)
-        
+
         # Then get emotion keywords based on the dominant sentiment
         emotion_keywords = sentiment_service.get_emotion_keywords(
             sentiment=sentiment_result["sentiment"]
         )
-        
+
         return emotion_keywords
     except Exception as e:
         logger.error(f"Error getting emotion keywords: {str(e)}")

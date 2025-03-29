@@ -105,14 +105,14 @@ def style_transfer_service(mock_t5_tokenizer, mock_t5_model):
     with patch('app.services.style_transfer_service.T5Tokenizer') as mock_tokenizer_cls, \
          patch('app.services.style_transfer_service.T5ForConditionalGeneration') as mock_model_cls, \
          patch('app.services.style_transfer_service.torch'):
-        
+
         mock_tokenizer_cls.from_pretrained.return_value = mock_t5_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_t5_model
-        
+
         service = StyleTransferService()
         service._tokenizer = mock_t5_tokenizer
         service._model = mock_t5_model
-        
+
         return service
 
 
@@ -122,14 +122,14 @@ def summarization_service(mock_t5_tokenizer, mock_t5_model):
     with patch('app.services.summarization_service.T5Tokenizer') as mock_tokenizer_cls, \
          patch('app.services.summarization_service.T5ForConditionalGeneration') as mock_model_cls, \
          patch('app.services.summarization_service.torch'):
-        
+
         mock_tokenizer_cls.from_pretrained.return_value = mock_t5_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_t5_model
-        
+
         service = SummarizationService()
         service._tokenizer = mock_t5_tokenizer
         service._model = mock_t5_model
-        
+
         return service
 
 
@@ -139,20 +139,20 @@ def sentiment_service(mock_bert_tokenizer, mock_bert_model):
     with patch('app.services.sentiment_service.AutoTokenizer') as mock_tokenizer_cls, \
          patch('app.services.sentiment_service.AutoModelForSequenceClassification') as mock_model_cls, \
          patch('app.services.sentiment_service.torch'):
-        
+
         mock_tokenizer_cls.from_pretrained.return_value = mock_bert_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_bert_model
-        
+
         # Create a mock for torch.nn.functional.softmax
         mock_softmax = MagicMock()
         mock_softmax.return_value = MagicMock()
         mock_softmax.return_value.__getitem__.return_value = [0.1, 0.2, 0.7]
-        
+
         with patch('app.services.sentiment_service.torch.nn.functional.softmax', mock_softmax):
             service = SentimentService()
             service._tokenizer = mock_bert_tokenizer
             service._model = mock_bert_model
-            
+
             return service
 
 
@@ -170,11 +170,11 @@ def sample_long_japanese_text():
     この文章は十分に長くする必要があります。そうでなければ、要約サービスは
     テキストが短すぎると判断して、元のテキストをそのまま返す可能性があります。
     したがって、この文章にはいくつかの段落と、さまざまな情報が含まれています。
-    
+
     日本の文学は世界的に有名です。夏目漱石、芥川龍之介、川端康成、三島由紀夫、
     村上春樹など、多くの著名な作家がいます。彼らの作品は、日本の文化、社会、
     歴史を反映しています。
-    
+
     日本の四季は鮮明で、それぞれ独自の美しさがあります。春には桜が咲き、
     夏には蝉の声が響き、秋には紅葉が山々を彩り、冬には雪が静かに降り積もります。
     この四季の変化は、日本の文化や芸術に大きな影響を与えてきました。
