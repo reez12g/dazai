@@ -6,10 +6,10 @@ asynchronous tasks using Google Cloud Tasks.
 """
 import json
 import logging
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 
-from google.cloud import tasks_v2
 from google.api_core.exceptions import GoogleAPIError
+from google.cloud import tasks_v2
 
 from app.config import task_settings, tasks_enabled
 
@@ -23,7 +23,9 @@ class TaskService:
     def __init__(self) -> None:
         """Initialize the Task service."""
         if not tasks_enabled:
-            logger.warning("Task service initialized but tasks are disabled due to invalid configuration.")
+            logger.warning(
+                "Task service initialized but tasks are disabled due to invalid configuration."
+            )
             self.client = None
             return
 
@@ -52,9 +54,7 @@ class TaskService:
         try:
             # Create the task queue path
             parent = self.client.queue_path(
-                task_settings.PROJECT_ID,
-                task_settings.LOCATION_ID,
-                task_settings.QUEUE_ID
+                task_settings.PROJECT_ID, task_settings.LOCATION_ID, task_settings.QUEUE_ID
             )
 
             # Define the task
@@ -66,15 +66,12 @@ class TaskService:
                         "service_account_email": task_settings.SERVICE_ACCOUNT_EMAIL,
                         "audience": task_settings.AUDIENCE,
                     },
-                    "headers": {"Content-type": "application/json"}
+                    "headers": {"Content-type": "application/json"},
                 }
             }
 
             # Prepare the payload
-            payload = json.dumps({
-                "text": text,
-                "response_url": response_url
-            })
+            payload = json.dumps({"text": text, "response_url": response_url})
 
             # Add the payload to the task
             task["http_request"]["body"] = payload.encode()

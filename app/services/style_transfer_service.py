@@ -33,34 +33,16 @@ class StyleTransferService:
 
         # Define available styles with their descriptions and prefixes
         self.styles: Dict[str, Dict[str, str]] = {
-            "meiji": {
-                "description": "Meiji era literary style (1868-1912)",
-                "prefix": "明治文体に変換: "
-            },
+            "meiji": {"description": "Meiji era literary style (1868-1912)", "prefix": "明治文体に変換: "},
             "taisho": {
                 "description": "Taisho era literary style (1912-1926)",
-                "prefix": "大正文体に変換: "
+                "prefix": "大正文体に変換: ",
             },
-            "showa": {
-                "description": "Showa era literary style (1926-1989)",
-                "prefix": "昭和文体に変換: "
-            },
-            "formal": {
-                "description": "Formal, polite Japanese",
-                "prefix": "丁寧な文体に変換: "
-            },
-            "casual": {
-                "description": "Casual, conversational Japanese",
-                "prefix": "カジュアルな文体に変換: "
-            },
-            "academic": {
-                "description": "Academic, scholarly Japanese",
-                "prefix": "学術的な文体に変換: "
-            },
-            "poetic": {
-                "description": "Poetic, literary Japanese",
-                "prefix": "詩的な文体に変換: "
-            }
+            "showa": {"description": "Showa era literary style (1926-1989)", "prefix": "昭和文体に変換: "},
+            "formal": {"description": "Formal, polite Japanese", "prefix": "丁寧な文体に変換: "},
+            "casual": {"description": "Casual, conversational Japanese", "prefix": "カジュアルな文体に変換: "},
+            "academic": {"description": "Academic, scholarly Japanese", "prefix": "学術的な文体に変換: "},
+            "poetic": {"description": "Poetic, literary Japanese", "prefix": "詩的な文体に変換: "},
         }
 
         # Rules for style transformation when model is not available
@@ -98,7 +80,7 @@ class StyleTransferService:
                     (r"それは", r"其は"),
                     (r"これは", r"此は"),
                 ]
-            }
+            },
         }
 
     @property
@@ -161,13 +143,17 @@ class StyleTransferService:
         # Validate the target style
         if target_style not in self.styles:
             available_styles = ", ".join(self.styles.keys())
-            raise ValueError(f"Unsupported style: {target_style}. Available styles: {available_styles}")
+            raise ValueError(
+                f"Unsupported style: {target_style}. Available styles: {available_styles}"
+            )
 
         try:
             # Try to use the model for transformation
             return self._transform_with_model(text, target_style)
         except Exception as e:
-            logger.warning(f"Model-based transformation failed: {str(e)}. Falling back to rule-based transformation.")
+            logger.warning(
+                f"Model-based transformation failed: {str(e)}. Falling back to rule-based transformation."
+            )
             # Fall back to rule-based transformation
             return self._transform_with_rules(text, target_style)
 
@@ -192,10 +178,7 @@ class StyleTransferService:
         # Generate the transformed text
         with torch.no_grad():
             outputs = self.model.generate(
-                inputs["input_ids"],
-                max_length=512,
-                num_beams=5,
-                early_stopping=True
+                inputs["input_ids"], max_length=512, num_beams=5, early_stopping=True
             )
 
         # Decode and return the transformed text

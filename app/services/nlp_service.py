@@ -52,10 +52,7 @@ class NLPService:
         return self._model
 
     def generate_text(
-        self,
-        text: str,
-        max_additional_tokens: int = None,
-        do_sample: bool = None
+        self, text: str, max_additional_tokens: int = None, do_sample: bool = None
     ) -> str:
         """
         Generate predictive text based on the input.
@@ -88,12 +85,12 @@ class NLPService:
                     input_ids,
                     do_sample=do_sample,
                     max_length=max_length,
-                    pad_token_id=self.tokenizer.eos_token_id
+                    pad_token_id=self.tokenizer.eos_token_id,
                 )
 
             # Decode the output and clean it
             decoded_output = self.tokenizer.batch_decode(output)[0]
-            cleaned_output = decoded_output.replace('</s>', '').replace('<unk>', '')
+            cleaned_output = decoded_output.replace("</s>", "").replace("<unk>", "")
 
             return cleaned_output
 

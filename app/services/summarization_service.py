@@ -92,7 +92,9 @@ class SummarizationService:
             input_text = f"要約: {text}"
 
             # Tokenize the input
-            inputs = self.tokenizer(input_text, return_tensors="pt", max_length=1024, truncation=True)
+            inputs = self.tokenizer(
+                input_text, return_tensors="pt", max_length=1024, truncation=True
+            )
 
             # Generate the summary
             with torch.no_grad():
@@ -102,7 +104,7 @@ class SummarizationService:
                     min_length=10,
                     length_penalty=2.0,
                     num_beams=4,
-                    early_stopping=True
+                    early_stopping=True,
                 )
 
             # Decode and return the summary
@@ -130,22 +132,21 @@ class SummarizationService:
             input_text = f"キーワード抽出: {text}"
 
             # Tokenize the input
-            inputs = self.tokenizer(input_text, return_tensors="pt", max_length=1024, truncation=True)
+            inputs = self.tokenizer(
+                input_text, return_tensors="pt", max_length=1024, truncation=True
+            )
 
             # Generate the keywords
             with torch.no_grad():
                 outputs = self.model.generate(
-                    inputs["input_ids"],
-                    max_length=50,
-                    num_beams=4,
-                    early_stopping=True
+                    inputs["input_ids"], max_length=50, num_beams=4, early_stopping=True
                 )
 
             # Decode the output
             keywords_text = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
 
             # Split into individual keywords and limit to the requested number
-            keywords = [kw.strip() for kw in keywords_text.split(',')]
+            keywords = [kw.strip() for kw in keywords_text.split(",")]
             return keywords[:num_keywords]
 
         except Exception as e:
