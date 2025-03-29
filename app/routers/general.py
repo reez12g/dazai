@@ -5,7 +5,8 @@ This module contains the root endpoint and other general-purpose endpoints.
 """
 import logging
 from typing import Dict
-from fastapi import APIRouter, HTTPException, status, Depends
+
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.models.schemas import ResponseMessage
 from app.services.cliche_service import ClicheService
@@ -35,6 +36,5 @@ async def read_root(cliche_service: ClicheService = Depends(get_cliche_service))
     except Exception as e:
         logger.error(f"Error in root endpoint: {str(e)}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An unexpected error occurred"
         )

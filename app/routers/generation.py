@@ -6,8 +6,9 @@ This module contains endpoints for generating predictive text.
 import json
 import logging
 from typing import Dict
+
 import requests
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.models.schemas import SentenceMaterial, TaskResponse
 from app.services.nlp_service import NLPService
@@ -26,8 +27,7 @@ def get_nlp_service():
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED, response_model=TaskResponse)
 async def generate_predictive_sentences(
-    sentence_material: SentenceMaterial,
-    nlp_service: NLPService = Depends(get_nlp_service)
+    sentence_material: SentenceMaterial, nlp_service: NLPService = Depends(get_nlp_service)
 ) -> Dict[str, str]:
     """
     Generate predictive text and send it to the specified URL.
@@ -44,16 +44,13 @@ async def generate_predictive_sentences(
         generated_text = nlp_service.generate_text(text=sentence_material.text)
 
         # Prepare the payload
-        payload = json.dumps({
-            "text": generated_text,
-            "response_type": "in_channel"
-        })
+        payload = json.dumps({"text": generated_text, "response_type": "in_channel"})
 
         # Send the response
         response = requests.post(
             str(sentence_material.response_url),
             data=payload,
-            headers={"Content-Type": "application/json"}
+            headers={"Content-Type": "application/json"},
         )
 
         # Check if the request was successful
@@ -64,11 +61,11 @@ async def generate_predictive_sentences(
         logger.error(f"Error sending response: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_502_BAD_GATEWAY,
-            detail="Failed to send response to the provided URL"
+            detail="Failed to send response to the provided URL",
         )
     except Exception as e:
         logger.error(f"Error in predictive_sentences: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An unexpected error occurred during text generation"
+            detail="An unexpected error occurred during text generation",
         )
