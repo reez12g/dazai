@@ -57,6 +57,46 @@ app/
 7. **Documentation**: Improved docstrings and comments.
 8. **Multiple NLP Models**: Support for various pre-trained models for different NLP tasks.
 
+## Code Quality
+
+The project uses several linting and code quality tools to maintain high code standards.
+
+### Linting Tools
+
+- **flake8**: Checks for PEP 8 compliance and common programming errors
+- **black**: Enforces a consistent code style
+- **isort**: Sorts imports according to conventions
+- **mypy**: Performs static type checking
+
+### Running Linters
+
+```bash
+# Install linting dependencies
+pip install -r requirements/requirements-lint.txt
+
+# Run all linting checks
+./run_lint.sh
+
+# Automatically fix formatting and import issues
+./fix_lint.sh
+
+# Run individual linters
+black .           # Format code with black
+isort .           # Sort imports
+flake8 .          # Check code style with flake8
+mypy app          # Run type checking
+```
+
+### Linting with Tests
+
+You can also run linting checks before running tests:
+
+```bash
+./run_tests.sh --lint
+```
+
+For detailed information about the linting setup and how to fix common issues, see [LINTING.md](LINTING.md).
+
 ## Testing
 
 The project includes a comprehensive test suite for unit and integration testing.
