@@ -3,11 +3,12 @@ Unit tests for the SummarizationService.
 
 This module contains tests for the text summarization service functionality.
 """
-import pytest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
-from app.services.summarization_service import SummarizationService
+import pytest
+
 from app.config import nlp_settings
+from app.services.summarization_service import SummarizationService
 
 
 class TestSummarizationService:
@@ -28,14 +29,18 @@ class TestSummarizationService:
         summarization_service._tokenizer.assert_called_once()
         summarization_service._model.generate.assert_called_once()
 
-    def test_summarize_text_with_custom_length(self, summarization_service, sample_long_japanese_text):
+    def test_summarize_text_with_custom_length(
+        self, summarization_service, sample_long_japanese_text
+    ):
         """Test summarizing text with a custom max length."""
         # Set up the mock
         summarization_service._tokenizer.decode.return_value = "カスタム長さの要約。"
 
         # Call the method with a custom max_length
         custom_length = 50
-        result = summarization_service.summarize_text(sample_long_japanese_text, max_length=custom_length)
+        result = summarization_service.summarize_text(
+            sample_long_japanese_text, max_length=custom_length
+        )
 
         # Verify the result
         assert result == "カスタム長さの要約。"
@@ -90,19 +95,25 @@ class TestSummarizationService:
         summarization_service._tokenizer.assert_called_once()
         summarization_service._model.generate.assert_called_once()
 
-    def test_extract_keywords_with_custom_count(self, summarization_service, sample_long_japanese_text):
+    def test_extract_keywords_with_custom_count(
+        self, summarization_service, sample_long_japanese_text
+    ):
         """Test extracting a custom number of keywords."""
         # Set up the mock to return comma-separated keywords
         summarization_service._tokenizer.decode.return_value = "日本文学, 四季, 文化, 作家, 自然, 歴史, 芸術"
 
         # Call the method with a custom number of keywords
         num_keywords = 3
-        result = summarization_service.extract_keywords(sample_long_japanese_text, num_keywords=num_keywords)
+        result = summarization_service.extract_keywords(
+            sample_long_japanese_text, num_keywords=num_keywords
+        )
 
         # Verify the result has the correct number of keywords
         assert len(result) == num_keywords
 
-    def test_extract_keywords_error_handling(self, summarization_service, sample_long_japanese_text):
+    def test_extract_keywords_error_handling(
+        self, summarization_service, sample_long_japanese_text
+    ):
         """Test error handling during keyword extraction."""
         # Make the model generate method raise an exception
         summarization_service._model.generate.side_effect = Exception("Model error")
@@ -114,8 +125,8 @@ class TestSummarizationService:
         assert isinstance(result, list)
         assert len(result) == 0
 
-    @patch('app.services.summarization_service.T5Tokenizer')
-    @patch('app.services.summarization_service.T5ForConditionalGeneration')
+    @patch("app.services.summarization_service.T5Tokenizer")
+    @patch("app.services.summarization_service.T5ForConditionalGeneration")
     def test_lazy_loading(self, mock_model_cls, mock_tokenizer_cls):
         """Test lazy loading of tokenizer and model."""
         # Create a new service instance without pre-loaded models
@@ -129,7 +140,7 @@ class TestSummarizationService:
         model = service.model
         mock_model_cls.from_pretrained.assert_called_once()
 
-    @patch('app.services.summarization_service.T5Tokenizer')
+    @patch("app.services.summarization_service.T5Tokenizer")
     def test_tokenizer_loading_error(self, mock_tokenizer_cls):
         """Test error handling when tokenizer loading fails."""
         # Make tokenizer loading fail
@@ -144,7 +155,7 @@ class TestSummarizationService:
 
         assert "Tokenizer error" in str(excinfo.value)
 
-    @patch('app.services.summarization_service.T5ForConditionalGeneration')
+    @patch("app.services.summarization_service.T5ForConditionalGeneration")
     def test_model_loading_error(self, mock_model_cls, summarization_service):
         """Test error handling when model loading fails."""
         # Reset the model to None

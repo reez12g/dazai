@@ -3,8 +3,9 @@ Unit tests for the StyleTransferService.
 
 This module contains tests for the style transfer service functionality.
 """
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from app.services.style_transfer_service import StyleTransferService
 
@@ -43,7 +44,9 @@ class TestStyleTransferService:
     def test_transform_text_with_rules_fallback(self, style_transfer_service, sample_japanese_text):
         """Test transforming text using rule-based fallback."""
         # Make the model-based transformation fail
-        style_transfer_service._transform_with_model = MagicMock(side_effect=Exception("Model error"))
+        style_transfer_service._transform_with_model = MagicMock(
+            side_effect=Exception("Model error")
+        )
 
         # Mock the rule-based transformation to return a known result
         expected_result = "これは日本語のサンプルテキストです。テストに使用されます。"
@@ -56,7 +59,9 @@ class TestStyleTransferService:
         assert result == expected_result
 
         # Verify the fallback method was called
-        style_transfer_service._transform_with_rules.assert_called_once_with(sample_japanese_text, "formal")
+        style_transfer_service._transform_with_rules.assert_called_once_with(
+            sample_japanese_text, "formal"
+        )
 
     def test_transform_text_invalid_style(self, style_transfer_service, sample_japanese_text):
         """Test transforming text with an invalid style."""
@@ -68,6 +73,7 @@ class TestStyleTransferService:
 
     def test_transform_with_rules(self, style_transfer_service):
         """Test the rule-based transformation directly."""
+
         # Create a mock implementation of _transform_with_rules that returns expected results
         def mock_transform_with_rules(text, style):
             if style == "formal":
@@ -102,7 +108,9 @@ class TestStyleTransferService:
         assert "吾輩" in result
         assert "まする" in result
 
-    def test_transform_with_rules_no_rules_for_style(self, style_transfer_service, sample_japanese_text):
+    def test_transform_with_rules_no_rules_for_style(
+        self, style_transfer_service, sample_japanese_text
+    ):
         """Test transforming text with a style that has no rules."""
         # Poetic style doesn't have rules defined
         result = style_transfer_service._transform_with_rules(sample_japanese_text, "poetic")
@@ -110,8 +118,8 @@ class TestStyleTransferService:
         # Should return the original text unchanged
         assert result == sample_japanese_text
 
-    @patch('app.services.style_transfer_service.T5Tokenizer')
-    @patch('app.services.style_transfer_service.T5ForConditionalGeneration')
+    @patch("app.services.style_transfer_service.T5Tokenizer")
+    @patch("app.services.style_transfer_service.T5ForConditionalGeneration")
     def test_lazy_loading(self, mock_model_cls, mock_tokenizer_cls):
         """Test lazy loading of tokenizer and model."""
         # Create a new service instance without pre-loaded models
@@ -125,7 +133,7 @@ class TestStyleTransferService:
         model = service.model
         mock_model_cls.from_pretrained.assert_called_once()
 
-    @patch('app.services.style_transfer_service.T5Tokenizer')
+    @patch("app.services.style_transfer_service.T5Tokenizer")
     def test_tokenizer_loading_error(self, mock_tokenizer_cls):
         """Test error handling when tokenizer loading fails."""
         # Make tokenizer loading fail
@@ -140,7 +148,7 @@ class TestStyleTransferService:
 
         assert "Tokenizer error" in str(excinfo.value)
 
-    @patch('app.services.style_transfer_service.T5ForConditionalGeneration')
+    @patch("app.services.style_transfer_service.T5ForConditionalGeneration")
     def test_model_loading_error(self, mock_model_cls, style_transfer_service):
         """Test error handling when model loading fails."""
         # Reset the model to None

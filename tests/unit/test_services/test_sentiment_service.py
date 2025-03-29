@@ -3,8 +3,9 @@ Unit tests for the SentimentService.
 
 This module contains tests for the sentiment analysis service functionality.
 """
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
 
 from app.services.sentiment_service import SentimentService
 
@@ -18,11 +19,7 @@ class TestSentimentService:
         expected_result = {
             "sentiment": "positive",
             "score": 0.7,
-            "details": {
-                "positive": 0.7,
-                "neutral": 0.2,
-                "negative": 0.1
-            }
+            "details": {"positive": 0.7, "neutral": 0.2, "negative": 0.1},
         }
 
         # Mock the entire analyze_sentiment method
@@ -37,10 +34,13 @@ class TestSentimentService:
         mock_softmax.return_value = MagicMock()
 
         # Patch the method to return our expected result
-        with patch.object(sentiment_service, '_get_dominant_sentiment', return_value=("positive", 0.7)), \
-             patch('app.services.sentiment_service.torch.nn.functional.softmax', mock_softmax), \
-             patch.object(sentiment_service, '_preprocess_text', return_value=sample_japanese_text):
-
+        with patch.object(
+            sentiment_service, "_get_dominant_sentiment", return_value=("positive", 0.7)
+        ), patch(
+            "app.services.sentiment_service.torch.nn.functional.softmax", mock_softmax
+        ), patch.object(
+            sentiment_service, "_preprocess_text", return_value=sample_japanese_text
+        ):
             # Override the internal implementation to return our expected scores
             def mock_analyze(*args, **kwargs):
                 return expected_result
@@ -147,8 +147,8 @@ class TestSentimentService:
         invalid_keywords = sentiment_service.get_emotion_keywords("invalid_sentiment")
         assert invalid_keywords == sentiment_service.get_emotion_keywords("neutral")
 
-    @patch('app.services.sentiment_service.AutoTokenizer')
-    @patch('app.services.sentiment_service.AutoModelForSequenceClassification')
+    @patch("app.services.sentiment_service.AutoTokenizer")
+    @patch("app.services.sentiment_service.AutoModelForSequenceClassification")
     def test_lazy_loading(self, mock_model_cls, mock_tokenizer_cls):
         """Test lazy loading of tokenizer and model."""
         # Create a new service instance without pre-loaded models
@@ -162,7 +162,7 @@ class TestSentimentService:
         model = service.model
         mock_model_cls.from_pretrained.assert_called_once()
 
-    @patch('app.services.sentiment_service.AutoTokenizer')
+    @patch("app.services.sentiment_service.AutoTokenizer")
     def test_tokenizer_loading_error(self, mock_tokenizer_cls):
         """Test error handling when tokenizer loading fails."""
         # Make tokenizer loading fail
@@ -177,7 +177,7 @@ class TestSentimentService:
 
         assert "Tokenizer error" in str(excinfo.value)
 
-    @patch('app.services.sentiment_service.AutoModelForSequenceClassification')
+    @patch("app.services.sentiment_service.AutoModelForSequenceClassification")
     def test_model_loading_error(self, mock_model_cls, sentiment_service):
         """Test error handling when model loading fails."""
         # Reset the model to None
