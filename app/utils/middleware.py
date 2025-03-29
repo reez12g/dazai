@@ -5,9 +5,10 @@ This module contains middleware components for the FastAPI application,
 such as exception handlers and request/response processors.
 """
 import logging
+
 from fastapi import FastAPI, Request, status
-from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from app.utils.exceptions import DazaiError
 
@@ -38,14 +39,13 @@ def setup_exception_handlers(app: FastAPI) -> None:
         logger.error(f"DazaiError: {exc.message}", exc_info=True)
         return JSONResponse(
             status_code=exc.status_code,
-            content={
-                "detail": exc.message,
-                **({"extra": exc.details} if exc.details else {})
-            }
+            content={"detail": exc.message, **({"extra": exc.details} if exc.details else {})},
         )
 
     @app.exception_handler(RequestValidationError)
-    async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+    async def validation_exception_handler(
+        request: Request, exc: RequestValidationError
+    ) -> JSONResponse:
         """
         Handle request validation errors.
 
@@ -59,10 +59,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         logger.error(f"Validation error: {exc.errors()}", exc_info=True)
         return JSONResponse(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            content={
-                "detail": "Validation error",
-                "errors": exc.errors()
-            }
+            content={"detail": "Validation error", "errors": exc.errors()},
         )
 
     @app.exception_handler(Exception)
@@ -80,7 +77,5 @@ def setup_exception_handlers(app: FastAPI) -> None:
         logger.error(f"Unhandled exception: {str(exc)}", exc_info=True)
         return JSONResponse(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            content={
-                "detail": "An unexpected error occurred"
-            }
+            content={"detail": "An unexpected error occurred"},
         )

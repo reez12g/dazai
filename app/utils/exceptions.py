@@ -10,7 +10,9 @@ from typing import Any, Dict, Optional
 class DazaiError(Exception):
     """Base exception class for all Dazai application errors."""
 
-    def __init__(self, message: str, status_code: int = 500, details: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, message: str, status_code: int = 500, details: Optional[Dict[str, Any]] = None
+    ):
         """
         Initialize the exception.
 
