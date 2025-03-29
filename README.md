@@ -57,6 +57,43 @@ app/
 7. **Documentation**: Improved docstrings and comments.
 8. **Multiple NLP Models**: Support for various pre-trained models for different NLP tasks.
 
+## Testing
+
+The project includes a comprehensive test suite for unit and integration testing.
+
+### Test Structure
+
+```
+tests/
+├── conftest.py            # Shared pytest fixtures
+├── README.md              # Testing documentation
+├── unit/                  # Unit tests
+│   ├── test_services/     # Service layer tests
+│   ├── test_routers/      # API endpoint tests
+│   └── test_models/       # Data model tests
+└── integration/           # Integration tests
+```
+
+### Running Tests
+
+```bash
+# Install test dependencies
+pip install -r requirements/requirements-test.txt
+
+# Run all tests
+pytest
+
+# Run tests with coverage report
+pytest --cov=app tests/
+
+# Run specific test categories
+pytest tests/unit/
+pytest tests/integration/
+
+# Use the test script (generates HTML coverage report)
+./run_tests.sh
+```
+
 ## Running the Application
 
 ### Local Development
