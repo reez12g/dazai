@@ -3,17 +3,17 @@ Shared pytest fixtures for the Dazai API tests.
 
 This module contains fixtures that can be used across different test modules.
 """
-import pytest
-from unittest.mock import MagicMock, patch
-
 # Mock external modules before importing services
 import sys
+from unittest.mock import MagicMock, patch
+
+import pytest
 
 # Mock NLP libraries
-sys.modules['torch'] = MagicMock()
-sys.modules['transformers'] = MagicMock()
-sys.modules['fugashi'] = MagicMock()
-sys.modules['tensorflow'] = MagicMock()
+sys.modules["torch"] = MagicMock()
+sys.modules["transformers"] = MagicMock()
+sys.modules["fugashi"] = MagicMock()
+sys.modules["tensorflow"] = MagicMock()
 
 # Mock Google Cloud libraries
 google_mock = MagicMock()
@@ -31,18 +31,20 @@ cloud_mock.tasks_v2 = tasks_v2_mock
 google_mock.protobuf = protobuf_mock
 
 # Add the mocks to sys.modules
-sys.modules['google'] = google_mock
-sys.modules['google.api_core'] = api_core_mock
-sys.modules['google.api_core.exceptions'] = exceptions_mock
-sys.modules['google.cloud'] = cloud_mock
-sys.modules['google.cloud.tasks_v2'] = tasks_v2_mock
-sys.modules['google.protobuf'] = protobuf_mock
+sys.modules["google"] = google_mock
+sys.modules["google.api_core"] = api_core_mock
+sys.modules["google.api_core.exceptions"] = exceptions_mock
+sys.modules["google.cloud"] = cloud_mock
+sys.modules["google.cloud.tasks_v2"] = tasks_v2_mock
+sys.modules["google.protobuf"] = protobuf_mock
+
 
 # Mock config to avoid Pydantic version issues
 class MockSettings:
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
+
 
 # Create mock settings
 mock_nlp_settings = MockSettings(
@@ -52,18 +54,19 @@ mock_nlp_settings = MockSettings(
     STYLE_TRANSFER_MODEL="sonoisa/t5-base-japanese",
     SUMMARIZATION_MODEL="sonoisa/t5-base-japanese-summarize",
     DEFAULT_SUMMARY_LENGTH=100,
-    SENTIMENT_MODEL="daigo/bert-base-japanese-sentiment"
+    SENTIMENT_MODEL="daigo/bert-base-japanese-sentiment",
 )
 
 # Mock the config module
 mock_config = MagicMock()
 mock_config.nlp_settings = mock_nlp_settings
-sys.modules['app.config'] = mock_config
+sys.modules["app.config"] = mock_config
+
+from app.services.sentiment_service import SentimentService
 
 # Now import services
 from app.services.style_transfer_service import StyleTransferService
 from app.services.summarization_service import SummarizationService
-from app.services.sentiment_service import SentimentService
 
 
 @pytest.fixture
@@ -102,10 +105,9 @@ def mock_bert_model():
 @pytest.fixture
 def style_transfer_service(mock_t5_tokenizer, mock_t5_model):
     """Fixture for StyleTransferService with mocked dependencies."""
-    with patch('app.services.style_transfer_service.T5Tokenizer') as mock_tokenizer_cls, \
-         patch('app.services.style_transfer_service.T5ForConditionalGeneration') as mock_model_cls, \
-         patch('app.services.style_transfer_service.torch'):
-
+    with patch("app.services.style_transfer_service.T5Tokenizer") as mock_tokenizer_cls, patch(
+        "app.services.style_transfer_service.T5ForConditionalGeneration"
+    ) as mock_model_cls, patch("app.services.style_transfer_service.torch"):
         mock_tokenizer_cls.from_pretrained.return_value = mock_t5_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_t5_model
 
@@ -119,10 +121,9 @@ def style_transfer_service(mock_t5_tokenizer, mock_t5_model):
 @pytest.fixture
 def summarization_service(mock_t5_tokenizer, mock_t5_model):
     """Fixture for SummarizationService with mocked dependencies."""
-    with patch('app.services.summarization_service.T5Tokenizer') as mock_tokenizer_cls, \
-         patch('app.services.summarization_service.T5ForConditionalGeneration') as mock_model_cls, \
-         patch('app.services.summarization_service.torch'):
-
+    with patch("app.services.summarization_service.T5Tokenizer") as mock_tokenizer_cls, patch(
+        "app.services.summarization_service.T5ForConditionalGeneration"
+    ) as mock_model_cls, patch("app.services.summarization_service.torch"):
         mock_tokenizer_cls.from_pretrained.return_value = mock_t5_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_t5_model
 
@@ -136,10 +137,9 @@ def summarization_service(mock_t5_tokenizer, mock_t5_model):
 @pytest.fixture
 def sentiment_service(mock_bert_tokenizer, mock_bert_model):
     """Fixture for SentimentService with mocked dependencies."""
-    with patch('app.services.sentiment_service.AutoTokenizer') as mock_tokenizer_cls, \
-         patch('app.services.sentiment_service.AutoModelForSequenceClassification') as mock_model_cls, \
-         patch('app.services.sentiment_service.torch'):
-
+    with patch("app.services.sentiment_service.AutoTokenizer") as mock_tokenizer_cls, patch(
+        "app.services.sentiment_service.AutoModelForSequenceClassification"
+    ) as mock_model_cls, patch("app.services.sentiment_service.torch"):
         mock_tokenizer_cls.from_pretrained.return_value = mock_bert_tokenizer
         mock_model_cls.from_pretrained.return_value = mock_bert_model
 
@@ -148,7 +148,7 @@ def sentiment_service(mock_bert_tokenizer, mock_bert_model):
         mock_softmax.return_value = MagicMock()
         mock_softmax.return_value.__getitem__.return_value = [0.1, 0.2, 0.7]
 
-        with patch('app.services.sentiment_service.torch.nn.functional.softmax', mock_softmax):
+        with patch("app.services.sentiment_service.torch.nn.functional.softmax", mock_softmax):
             service = SentimentService()
             service._tokenizer = mock_bert_tokenizer
             service._model = mock_bert_model
